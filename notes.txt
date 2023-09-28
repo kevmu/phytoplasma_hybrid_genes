@@ -1,15 +1,7 @@
-cpn60/secY/secA/nusA/tuf
+Name: Kevin Muirhead
+Date: September 28th, 2023
 
-First, I extracted ORFs from the hyb-based assemblies:
-
-getorf -sequence (input-seq) -minsize 1000 -maxsize 4000 -find 3 -methionine N -outseq (ouput-seq)
-
- cat cpn60 secY secA nusA tuf > file.txt
-
-seqret file.txt 
-
-manually edit header line in nano.
-
+### Instructions on how to install the conda environments for the shell script and python script.
 
 ## Install EMBOSS conda environment to get getorf command.
 
@@ -21,4 +13,21 @@ conda activate emboss_env
 
 # Install the EMBOSS conda environment. 
 conda install -c bioconda emboss
- 
+
+## Install biopython conda environment to get getorf command.
+
+# Create the biopython conda environment.
+conda create --name biopython_env
+
+# Activate the biopython conda environment
+conda activate biopython_env
+
+# Install the biopython conda environment.
+conda install -c bioconda biopython
+
+
+### How to use the extract_hybrid_genes.sh script.
+
+Use a text editor to edit the input and output directories in the extract_hybrid_genes.sh file. 
+
+
