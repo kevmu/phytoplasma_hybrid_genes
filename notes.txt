@@ -1,0 +1,24 @@
+cpn60/secY/secA/nusA/tuf
+
+First, I extracted ORFs from the hyb-based assemblies:
+
+getorf -sequence (input-seq) -minsize 1000 -maxsize 4000 -find 3 -methionine N -outseq (ouput-seq)
+
+ cat cpn60 secY secA nusA tuf > file.txt
+
+seqret file.txt 
+
+manually edit header line in nano.
+
+
+## Install EMBOSS conda environment to get getorf command.
+
+# Create the EMBOSS conda environment.
+conda create --name emboss_env
+
+# Activate the EMBOSS conda environment
+conda activate emboss_env
+
+# Install the EMBOSS conda environment. 
+conda install -c bioconda emboss
+ 
