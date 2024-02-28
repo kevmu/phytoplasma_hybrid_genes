@@ -257,41 +257,64 @@ done
 
 #grep -c M01666 /home/AAFC-AAC/dumonceauxt/phyto_hyb/pre_processing/all-mapped_fastq/*.16S_AY-I.fastq
 
-#fastq_read_count=$(wc -l ${mapped_fastq_file})
-#echo "$((fastq_read_count) / 4))"
 
-#
+# The mapped fastq read count summary per gene.
+num_fastq_reads_file="${output_dir}/"
+
+# Calculate the number of fastq reads and report to the summary file.
+for fastq_filename in $(cat $fastq_list_file);
+do
+
+    for gene_name in $(cat $subgroup_gene_list_file | cut -d '_' -f2 | uniq);
+    do
+        # The gene fastq file.
+        mapped_gene_fastq_file="${mapped_fastq_output_dir}/${fastq_filename}.mapped.${gene_name}.fastq";
+        
+        # Calculate the number of fastq reads.
+        num_fastq_reads=$(expr $(wc -l ${mapped_gene_fastq_file}) / 4)
+        
+        echo -e "${fastq_filename}\t${gene_name}\t${num_fastq_reads}\n" >> ${num_fastq_reads_file}
+        echo "echo -e \"${fastq_filename}\t${gene_name}\t${num_fastq_reads}\n\" >> ${num_fastq_reads_file}"
+        
+    done
+done
+
 ##Assembly
 
 ## The assembly output directory.
-#assembly_output_dir="${output_dir}/assemblies"
-#mkdir -p $assemblies_output_dir
-#
-#for fastq_filename in $(cat $fastq_list_file);
-#do
-#
-#    for gene_name in $(cat $subgroup_gene_list_file | cut -d '_' -f2 | uniq);
-#    do
-#        # The gene fastq file.
-#        mapped_gene_fastq_file="${mapped_fastq_output_dir}/${fastq_filename}.mapped.${gene_name}.fastq";
-#        gene_assembly_output_dir="${assembly_output_dir}/${fastq_filename}/${gene_name}"
-#        
-#        echo "transabyss --se ${mapped_gene_fastq_file} -k ${transabyss_kmers} --threads ${num_threads} --outdir ${gene_assembly_output_dir}"
-#        transabyss --se ${mapped_gene_fastq_file} -k ${transabyss_kmers} --threads ${num_threads} --outdir ${gene_assembly_output_dir}
-#    done
-#done
+assembly_output_dir="${output_dir}/assemblies"
+mkdir -p $assemblies_output_dir
+
+# Activate the transabyss conda environment.
+conda activate transabyss_env
+
+# Run the assembly step on each mapped gene fastq file.
+for fastq_filename in $(cat $fastq_list_file);
+do
+
+    for gene_name in $(cat $subgroup_gene_list_file | cut -d '_' -f2 | uniq);
+    do
+        # The gene fastq file.
+        mapped_gene_fastq_file="${mapped_fastq_output_dir}/${fastq_filename}.mapped.${gene_name}.fastq";
+        gene_assembly_output_dir="${assembly_output_dir}/${fastq_filename}/${gene_name}"
+        
+        echo "transabyss --se ${mapped_gene_fastq_file} -k ${transabyss_kmers} --threads ${num_threads} --outdir ${gene_assembly_output_dir}"
+        transabyss --se ${mapped_gene_fastq_file} -k ${transabyss_kmers} --threads ${num_threads} --outdir ${gene_assembly_output_dir}
+    done
+done
 
 ##step6 - trim assemblies to retain only those >500 bp (code added by Kevin Muirhead)
 
-#conda activate biopython_env
-#
-##this command will now trim transabyss-final.fa to only those with a length >=500 bp and output it to test-seq-l500.fa. Can change names or length as needed.
-#bioawk -c fastx 'length($seq) >= 500{ print ">"$name" "$comment; print $seq }'  transabyss-final.fa > test-seq-l500.fa
+# Activate the biopython conda environment.
+conda activate biopython_env
 
+for fastq_filename in $(cat $fastq_list_file);
+do
 
-#python filter_sequences_by_length.py -i ${infile} -l ${min_seq_length} -o ${outfile}
+    for gene_name in $(cat $subgroup_gene_list_file | cut -d '_' -f2 | uniq);
+    do
+        gene_assembly_output_dir="${assembly_output_dir}/${fastq_filename}/${gene_name}"
+        python filter_sequences_by_length.py -i ${infile} -l ${min_seq_length} -o ${outfile}
+    done
+done
 
-# Edels phy hybridization test dataset
-
-#[2:19 PM] Dumonceaux, Tim (AAFC/AAC)
-#/archive/dumonceauxt/221019_M016666_0188_000000000_DFT53_EPLStrawberry/Fastq
