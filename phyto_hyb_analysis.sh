@@ -259,7 +259,7 @@ done
 
 
 # The mapped fastq read count summary per gene.
-num_fastq_reads_file="${output_dir}/"
+num_fastq_reads_file="${output_dir}/read_count_summary.tsv"
 
 # Calculate the number of fastq reads and report to the summary file.
 for fastq_filename in $(cat $fastq_list_file);
@@ -272,9 +272,9 @@ do
         
         # Calculate the number of fastq reads.
         num_fastq_reads=$(expr $(wc -l ${mapped_gene_fastq_file}) / 4)
-        
-        echo -e "${fastq_filename}\t${gene_name}\t${num_fastq_reads}\n" >> ${num_fastq_reads_file}
+                
         echo "echo -e \"${fastq_filename}\t${gene_name}\t${num_fastq_reads}\n\" >> ${num_fastq_reads_file}"
+        echo -e "${fastq_filename}\t${gene_name}\t${num_fastq_reads}\n" >> ${num_fastq_reads_file}
         
     done
 done
@@ -282,7 +282,7 @@ done
 ##Assembly
 
 ## The assembly output directory.
-assembly_output_dir="${output_dir}/assemblies"
+assembly_output_dir="${output_dir}/gene_assemblies"
 mkdir -p $assemblies_output_dir
 
 # Activate the transabyss conda environment.
@@ -313,8 +313,14 @@ do
 
     for gene_name in $(cat $subgroup_gene_list_file | cut -d '_' -f2 | uniq);
     do
+        assembly_file=""
         gene_assembly_output_dir="${assembly_output_dir}/${fastq_filename}/${gene_name}"
-        python filter_sequences_by_length.py -i ${infile} -l ${min_seq_length} -o ${outfile}
+        mkdir -p $gene_assembly_output_dir
+        
+        filtered_assembly_file="${gene_assembly_output_dir}/${fastq_filename}_${gene_name}_min${min_seq_length}_assembly.fasta"
+        
+        echo "python filter_sequences_by_length.py -i ${assembly_file} -l ${min_seq_length} -o ${filtered_assembly_file}"
+        python filter_sequences_by_length.py -i ${assembly_file} -l ${min_seq_length} -o ${filtered_assembly_file}
     done
 done
 
