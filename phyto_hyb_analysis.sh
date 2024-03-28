@@ -28,6 +28,9 @@ read1_suffix="_1.fastq"
 # The read2 fastq suffix.
 read2_suffix="_2.fastq"
 
+# The fastq file extension suffix.
+fastq_file_ext=".fastq"
+
 # The number of cpu threads to use.
 num_threads=8
 
