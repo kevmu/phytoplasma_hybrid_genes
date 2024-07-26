@@ -20,13 +20,13 @@
 source ~/.bashrc
 
 # The fastq input file directory.
-fastq_input_dir="/home/kevin.muirhead/phytoplasma_hybrid_genes/sra_fastq_files"
+fastq_input_dir="/home/kevin.muirhead/test/phy_hyb/fixed_sra_fastq_files"
 
 # The read1 fastq suffix.
-read1_suffix="_1.fastq"
+read1_suffix="_R1.fastq"
 
 # The read2 fastq suffix.
-read2_suffix="_2.fastq"
+read2_suffix="_R2.fastq"
 
 # The fastq file extension suffix.
 fastq_file_ext=".fastq"
@@ -35,7 +35,7 @@ fastq_file_ext=".fastq"
 num_threads=8
 
 # The base output directory.
-output_dir="/home/kevin.muirhead/phytoplasma_hybrid_genes/phy_hyb_genes"
+output_dir="/home/kevin.muirhead/test/phy_hyb/phy_hyb_genes"
 mkdir -p $output_dir
 
 # The preprocessing output directory.
@@ -77,13 +77,38 @@ fragment_length_stddev=200
 # The read length.
 read_length=300
 
-### Bowtie2 program parameters.
+### Databases.
 
-# The reference protein sequence fasta file.
-ref_fasta_infile="/home/kevin.muirhead/phytoplasma_hybrid_genes/ref_db/ref_protein_seqs.fasta"
+# Database path.
+database_dir="/home/kevin.muirhead/phytoplasma_hybrid_genes/databases"
+
+### Bowtie2 database.
+
+# The reference protein sequence fasta file for building the bowtie2 reference database index.
+ref_fasta_infile="${database_dir}/ref_db/ref_protein_seqs.fasta"
+
+### Blast database
+
+# The cpn60 gene fasta file for the blast database.
+cpn60_fasta_infile="${database_dir}/blast_dbs/cpn60/cpn60.fasta"
+
+# The nusA gene fasta file for the blast database.
+nusA_fasta_infile="${database_dir}/blast_dbs/nusA/nusA.fasta"
+
+# The rp gene fasta file for the blast database.
+rp_fasta_infile="${database_dir}/blast_dbs/rp/rp.fasta"
+
+# The secA gene fasta file for the blast database.
+secA_fasta_infile="${database_dir}/blast_dbs/secA/secA.fasta"
+
+# The secY gene fasta file for the blast database.
+secY_fasta_infile="${database_dir}/blast_dbs/secY/secY.fasta"
+
+# The tuf gene fasta file for the blast database.
+tuf_fasta_infile="${database_dir}/blast_dbs/tuf/tuf.fasta"
 
 # The header line content from the reference protein sequence fasta file in a list file for retaining fastq reads aligned to the reference subgroup protein sequences.
-subgroup_gene_list_file="/home/kevin.muirhead/phytoplasma_hybrid_genes/ref_db/ref_protein_seqs_header_list.txt"
+subgroup_gene_list_file="/home/kevin.muirhead/phytoplasma_hybrid_genes/databases/ref_db/ref_protein_seqs_header_list.txt"
 
 # Get the contents of each fasta header in the reference fasta database and write to a file so we can extract mapped reads to a fastq file for assembly.
 grep ">" ${ref_fasta_infile} | sed 's/>//g' > ${subgroup_gene_list_file}
@@ -93,6 +118,8 @@ grep ">" ${ref_fasta_infile} | sed 's/>//g' > ${subgroup_gene_list_file}
 # The transabyss kmer size.
 transabyss_kmers=32
 
+# Length Filtering program parameters.
+min_seq_length=500
 
 # Find all the fastq files in the dataset and write the full path to the file.
 echo "find ${fastq_input_dir} -name \"*${fastq_file_ext}\" -type f | sed \"s/${read1_suffix}\|${read2_suffix}//g\" | rev | cut -d '/' -f1 | rev | sort -V | uniq > ${fastq_list_file}"
@@ -120,9 +147,9 @@ do
     trim_paired_rev_fastq_file="${trim_fastq_dir}/${fastq_filename}.paired.reverse.fq";
     trim_unpaired_rev_fastq_file="${trim_fastq_dir}/${fastq_filename}.unpaired.reverse.fq";
     
-    echo "trimmomatic PE ${fastq_read1_file} ${fastq_read2_file} ${trim_paired_fastq_file} ${trim_unpaired_fastq_file} ${trim_paired_rev_fastq_file} ${trim_unpaired_rev_fastq_file} LEADING:${cut_leading_bases} TRAILING:${cut_trailing_bases} SLIDINGWINDOW:${sliding_window_size}:${sliding_window_phred_score} MINLEN:${min_read_length}";
-    
+    echo "trimmomatic PE ${fastq_read1_file} ${fastq_read2_file} ${trim_paired_fastq_file} ${trim_unpaired_fastq_file} ${trim_paired_rev_fastq_file} ${trim_unpaired_rev_fastq_file} LEADING:${cut_leading_bases} TRAILING:${cut_trailing_bases} SLIDINGWINDOW:${sliding_window_size}:${sliding_window_phred_score} MINLEN:${min_read_length}";    
     trimmomatic PE ${fastq_read1_file} ${fastq_read2_file} ${trim_paired_fastq_file} ${trim_unpaired_fastq_file} ${trim_paired_rev_fastq_file} ${trim_unpaired_rev_fastq_file} LEADING:${cut_leading_bases} TRAILING:${cut_trailing_bases} SLIDINGWINDOW:${sliding_window_size}:${sliding_window_phred_score} MINLEN:${min_read_length};
+
 done
 
 
@@ -143,8 +170,8 @@ do
     merged_fastq_outfile="${fastq_filename}.merged";
     
     echo "flash2 -f ${fragment_length} -s ${fragment_length_stddev} -r ${read_length} ${trim_paired_fastq_file} ${trim_paired_rev_fastq_file} -d ${flash2_merge_dir} -o ${merged_fastq_outfile}";
-    
     flash2 -f ${fragment_length} -s ${fragment_length_stddev} -r ${read_length} ${trim_paired_fastq_file} ${trim_paired_rev_fastq_file} -d ${flash2_merge_dir} -o ${merged_fastq_outfile};
+
 done
 
 
@@ -264,6 +291,9 @@ done
 # The mapped fastq read count summary per gene.
 num_fastq_reads_file="${output_dir}/read_count_summary.tsv"
 
+echo "echo -e \"sample_name\tgene_name\tnum_fastq_reads\" > ${num_fastq_reads_file}"
+echo -e "sample_name\tgene_name\tnum_fastq_reads" > ${num_fastq_reads_file}
+
 # Calculate the number of fastq reads and report to the summary file.
 for fastq_filename in $(cat $fastq_list_file);
 do
@@ -274,10 +304,10 @@ do
         mapped_gene_fastq_file="${mapped_fastq_output_dir}/${fastq_filename}.mapped.${gene_name}.fastq";
         
         # Calculate the number of fastq reads.
-        num_fastq_reads=$(expr $(wc -l ${mapped_gene_fastq_file}) / 4)
-                
-        echo "echo -e \"${fastq_filename}\t${gene_name}\t${num_fastq_reads}\n\" >> ${num_fastq_reads_file}"
-        echo -e "${fastq_filename}\t${gene_name}\t${num_fastq_reads}\n" >> ${num_fastq_reads_file}
+	num_fastq_reads=$(echo $(cat ${mapped_gene_fastq_file} | wc -l) / 4 | bc)
+
+        echo "echo -e \"${fastq_filename}\t${gene_name}\t${num_fastq_reads}\" >> ${num_fastq_reads_file}"
+        echo -e "${fastq_filename}\t${gene_name}\t${num_fastq_reads}" >> ${num_fastq_reads_file}
         
     done
 done
@@ -316,10 +346,11 @@ do
 
     for gene_name in $(cat $subgroup_gene_list_file | cut -d '_' -f2 | uniq);
     do
-        assembly_file=""
-        gene_assembly_output_dir="${assembly_output_dir}/${fastq_filename}/${gene_name}"
-        mkdir -p $gene_assembly_output_dir
         
+	gene_assembly_output_dir="${assembly_output_dir}/${fastq_filename}/${gene_name}"
+        
+	assembly_file="${gene_assembly_output_dir}/transabyss-final.fa"
+
         filtered_assembly_file="${gene_assembly_output_dir}/${fastq_filename}_${gene_name}_min${min_seq_length}_assembly.fasta"
         
         echo "python filter_sequences_by_length.py -i ${assembly_file} -l ${min_seq_length} -o ${filtered_assembly_file}"
