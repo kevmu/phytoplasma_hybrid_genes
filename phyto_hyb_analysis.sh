@@ -35,7 +35,7 @@ fastq_file_ext=".fastq"
 num_threads=8
 
 # The base output directory.
-output_dir="/home/kevin.muirhead/test/phy_hyb/phy_hyb_genes"
+output_dir="/home/kevin.muirhead/phy_hyb_output"
 mkdir -p $output_dir
 
 # The preprocessing output directory.
@@ -80,35 +80,15 @@ read_length=300
 ### Databases.
 
 # Database path.
-database_dir="/home/kevin.muirhead/phytoplasma_hybrid_genes/databases"
+database_dir="/home/kevin.muirhead/test/phy_hyb/phytoplasma_hybrid_genes/databases"
 
 ### Bowtie2 database.
 
 # The reference protein sequence fasta file for building the bowtie2 reference database index.
 ref_fasta_infile="${database_dir}/ref_db/ref_protein_seqs.fasta"
 
-### Blast database
-
-# The cpn60 gene fasta file for the blast database.
-cpn60_fasta_infile="${database_dir}/blast_dbs/cpn60/cpn60.fasta"
-
-# The nusA gene fasta file for the blast database.
-nusA_fasta_infile="${database_dir}/blast_dbs/nusA/nusA.fasta"
-
-# The rp gene fasta file for the blast database.
-rp_fasta_infile="${database_dir}/blast_dbs/rp/rp.fasta"
-
-# The secA gene fasta file for the blast database.
-secA_fasta_infile="${database_dir}/blast_dbs/secA/secA.fasta"
-
-# The secY gene fasta file for the blast database.
-secY_fasta_infile="${database_dir}/blast_dbs/secY/secY.fasta"
-
-# The tuf gene fasta file for the blast database.
-tuf_fasta_infile="${database_dir}/blast_dbs/tuf/tuf.fasta"
-
 # The header line content from the reference protein sequence fasta file in a list file for retaining fastq reads aligned to the reference subgroup protein sequences.
-subgroup_gene_list_file="/home/kevin.muirhead/phytoplasma_hybrid_genes/databases/ref_db/ref_protein_seqs_header_list.txt"
+subgroup_gene_list_file="${database_dir}/ref_db/ref_protein_seqs_header_list.txt"
 
 # Get the contents of each fasta header in the reference fasta database and write to a file so we can extract mapped reads to a fastq file for assembly.
 grep ">" ${ref_fasta_infile} | sed 's/>//g' > ${subgroup_gene_list_file}
@@ -357,4 +337,42 @@ do
         python filter_sequences_by_length.py -i ${assembly_file} -l ${min_seq_length} -o ${filtered_assembly_file}
     done
 done
+
+### BLAST
+
+for fastq_filename in $(cat $fastq_list_file);
+do
+
+    for gene_name in $(cat $subgroup_gene_list_file | cut -d '_' -f2 | uniq);
+    do
+
+        gene_assembly_output_dir="${assembly_output_dir}/${fastq_filename}/${gene_name}"
+
+        filtered_assembly_file="${gene_assembly_output_dir}/${fastq_filename}__${gene_name}_assembly.fasta"
+	
+	blast_db_fasta_file="${database_dir}/blast_dbs/${gene_name}/${gene_name}.fasta"
+
+	blast_results_file="${gene_assembly_output_dir}/${fastq_filename}__{$gene_name}_blastn_results.tsv"
+
+	# Activate the blast conda environment.
+	conda activate blast_env
+
+	echo "makeblastdb -in ${blast_db_fasta_file} -dbtype nucl -out ${blast_db_fasta_file}"
+	makeblastdb -in ${blast_db_fasta_file} -dbtype nucl -out ${blast_db_fasta_file}
+
+	echo "echo \"qseqid qacc qlen sseqid sacc slen stitle qstart qend sstart send length evalue bitscore pident qcovs qcovhsp nident positive mismatch gaps qframe sframe\" | sed 's/ /\t/g' > ${blast_results_file}"
+	echo "qseqid qacc qlen sseqid sacc slen stitle qstart qend sstart send length evalue bitscore pident qcovs qcovhsp nident positive mismatch gaps qframe sframe" | sed 's/ /\t/g' > ${blast_results_file}
+
+	echo "blastn -query ${filtered_assembly_file} -db ${blast_db_fasta_file} -out "-" -evalue 1e-05 -max_target_seqs 10 -num_threads ${num_threads} -outfmt '6 qseqid qacc qlen sseqid sacc slen stitle qstart qend sstart send length evalue bitscore pident qcovs qcovhsp nident positive mismatch gaps qframe sframe' >> ${blast_results_file}"
+	blastn -query ${filtered_assembly_file} -db ${blast_db_fasta_file} -out "-" -evalue 1e-05 -max_target_seqs 10 -num_threads ${num_threads} -outfmt '6 qseqid qacc qlen sseqid sacc slen stitle qstart qend sstart send length evalue bitscore pident qcovs qcovhsp nident positive mismatch gaps qframe sframe' >> ${blast_results_file}
+
+	# Activate the biopython conda environment.
+	conda activate biopython_env 
+	
+	echo "python parse_blast_results_fasta.py --fasta_infile ${filtered_assembly_file} --blast_results_infile ${blast_results_file} --output_dir ${gene_assembly_output_dir}"
+	python parse_blast_results_fasta.py --fasta_infile ${filtered_assembly_file} --blast_results_infile ${blast_results_file} --output_dir ${gene_assembly_output_dir}
+
+    done
+done
+
 
