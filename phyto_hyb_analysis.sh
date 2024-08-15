@@ -19,30 +19,35 @@
 # Get the source ~/.bashrc file so that we can use conda.
 source ~/.bashrc
 
+# The list of fastq filenames.
+fastq_list_file="/home/AGR.GC.CA/muirheadk/phytoplasma_hybrid_genes/fastq_files_list.txt"
+
 # The fastq input file directory.
-fastq_input_dir="/home/kevin.muirhead/test/phy_hyb/fixed_sra_fastq_files"
+fastq_input_dir="/archive/dumonceauxt/230801_M01666_0203_000000000-KTT65_IMPACTTlilacBBSPTWMQhybsEPL/Fastq"
 
 # The read1 fastq suffix.
-read1_suffix="_R1.fastq"
+#read1_suffix="_R1.fastq"
+read1_suffix="_L001_R1_001.fastq.gz"
 
 # The read2 fastq suffix.
-read2_suffix="_R2.fastq"
+#read2_suffix="_R2.fastq"
+read2_suffix="_L001_R2_001.fastq.gz"
 
 # The fastq file extension suffix.
-fastq_file_ext=".fastq"
+#fastq_file_ext=".fastq.gz"
 
 # The number of cpu threads to use.
-num_threads=8
+num_threads=40
 
 # The base output directory.
-output_dir="/home/kevin.muirhead/phy_hyb_output"
+output_dir="/home/AGR.GC.CA/muirheadk/phytoplasma_hybrid_genes/phy_hyb_output"
 mkdir -p $output_dir
 
 # The preprocessing output directory.
 preprocessing_output_dir="${output_dir}/preprocessing"
 mkdir -p $preprocessing_output_dir
 
-fastq_list_file="${preprocessing_output_dir}/fastq_files_list.txt"
+#fastq_list_file="${preprocessing_output_dir}/fastq_files_list.txt"
 
 ### Trimmomatic program parameters.
 
@@ -80,8 +85,7 @@ read_length=300
 ### Databases.
 
 # Database path.
-database_dir="/home/kevin.muirhead/test/phy_hyb/phytoplasma_hybrid_genes/databases"
-
+database_dir="/home/AGR.GC.CA/muirheadk/phytoplasma_hybrid_genes/databases"
 ### Bowtie2 database.
 
 # The reference protein sequence fasta file for building the bowtie2 reference database index.
@@ -102,8 +106,8 @@ transabyss_kmers=32
 min_seq_length=500
 
 # Find all the fastq files in the dataset and write the full path to the file.
-echo "find ${fastq_input_dir} -name \"*${fastq_file_ext}\" -type f | sed \"s/${read1_suffix}\|${read2_suffix}//g\" | rev | cut -d '/' -f1 | rev | sort -V | uniq > ${fastq_list_file}"
-find ${fastq_input_dir} -name "*${fastq_file_ext}" -type f | sed "s/${read1_suffix}\|${read2_suffix}//g" | rev | cut -d '/' -f1 | rev | sort -V | uniq > ${fastq_list_file}
+#echo "find ${fastq_input_dir} -name \"*${fastq_file_ext}\" -type f | sed \"s/${read1_suffix}\|${read2_suffix}//g\" | rev | cut -d '/' -f1 | rev | sort -V | uniq > ${fastq_list_file}"
+#find ${fastq_input_dir} -name "*${fastq_file_ext}" -type f | sed "s/${read1_suffix}\|${read2_suffix}//g" | rev | cut -d '/' -f1 | rev | sort -V | uniq > ${fastq_list_file}
 
 
 #step 1A: trimmomatic
@@ -331,7 +335,7 @@ do
         
 	assembly_file="${gene_assembly_output_dir}/transabyss-final.fa"
 
-        filtered_assembly_file="${gene_assembly_output_dir}/${fastq_filename}_${gene_name}_min${min_seq_length}_assembly.fasta"
+        filtered_assembly_file="${gene_assembly_output_dir}/${fastq_filename}__${gene_name}_assembly.fasta"
         
         echo "python filter_sequences_by_length.py -i ${assembly_file} -l ${min_seq_length} -o ${filtered_assembly_file}"
         python filter_sequences_by_length.py -i ${assembly_file} -l ${min_seq_length} -o ${filtered_assembly_file}
@@ -352,7 +356,7 @@ do
 	
 	blast_db_fasta_file="${database_dir}/blast_dbs/${gene_name}/${gene_name}.fasta"
 
-	blast_results_file="${gene_assembly_output_dir}/${fastq_filename}__{$gene_name}_blastn_results.tsv"
+	blast_results_file="${gene_assembly_output_dir}/${fastq_filename}__${gene_name}_blastn_results.tsv"
 
 	# Activate the blast conda environment.
 	conda activate blast_env

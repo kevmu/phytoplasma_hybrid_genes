@@ -1,0 +1,128 @@
+# Get the source ~/.bashrc file so that we can use conda.
+
+## Instructions for installing the trimmomatic conda environment.
+
+# Create the trimmomatic conda environment.
+conda create --name trimmomatic_env
+
+# Activate the trimmomatic conda environment.
+conda activate trimmomatic_env
+
+# Install the trimmomatic conda environment.
+conda install -c bioconda trimmomatic
+
+## Instructions for installing the flash2 conda environment.
+
+# Create the flash2 conda environment.
+conda create --name flash2_env
+
+# Activate the flash2 conda environment.
+conda activate flash2_env
+
+# Install the flash2 conda environment.
+conda install -c bioconda flash2
+
+## Instructions for installing the bowtie2 conda environment.
+
+# Create the bowtie2 conda environment.
+conda create --name bowtie2_env
+
+# Activate the bowtie2 conda environment.
+conda activate bowtie2_env
+
+# Install the bowtie2 conda environment.
+conda install -c bioconda bowtie2
+
+## Instructions for installing the samtools conda environment.
+
+# Create the samtools conda environment.
+conda create --name samtools_env
+
+# Activate the samtools conda environment.
+conda activate samtools_env
+
+# Install the samtools conda environment.
+conda install -c bioconda samtools==1.6=hb116620_7
+
+## Installing the transabyss conda environment.
+
+# Create the transabyss conda environment.
+conda create --name transabyss_env
+
+# Activate the transabyss conda environment.
+conda activate transabyss_env
+
+# Install the transabyss conda enironment.
+
+# Install transabyss dependencies.
+
+# Install python version 3.7.
+conda install -c conda-forge python=3.7
+
+# Install the igraph python module using pip.
+pip install igraph
+
+# Install abyss.
+conda install -c bioconda abyss
+
+# Optional abyss dependencies
+conda install -c bioconda arcs tigmint
+
+conda install -c bioconda samtools==1.6=hb116620_7
+
+conda install -c conda-forge pigz zsh
+
+# transabyss dependencies.
+conda install -c bioconda blat
+
+# Create the software directory.
+mkdir -p software
+
+# Change directory to the software directory.
+cd software
+
+### Download transabyss software source code.
+
+## Can do one of the following.
+
+# Clone from github.
+
+# Clone the transabyss software into the software directory.
+git clone https://github.com/bcgsc/transabyss.git
+
+# OR
+
+# Download transabyss from current release.
+wget https://www.bcgsc.ca/platform/bioinfo/software/trans-abyss/releases/2.0.1/transabyss-2.0.1.zip -O transabyss-2.0.1.zip
+
+# Unzip the transabyss compressed folder.
+unzip transabyss-2.0.1.zip
+
+
+# Add following line to your ~/.bashrc file.
+#export PATH="/home/AGR.GC.CA/muirheadk/phytoplasma_hybrid_genes/software/transabyss:$PATH"
+export PATH="/home/AGR.GC.CA/muirheadk/phytoplasma_hybrid_genes/software/transabyss-2.0.1:$PATH"
+
+## Install blast conda environment.
+
+# Create the blast conda environment. 
+conda create --name blast_env
+
+# Activate the blast conda environment.
+conda activate blast_env
+
+# Install the blast conda environment.
+conda install -c bioconda blast
+
+## Install biopython conda environment.
+
+# Create the biopython conda environment.
+conda create --name biopython_env
+
+# Activate the biopython conda environment
+conda activate biopython_env
+
+# Install the biopython conda environment.
+conda install -c bioconda biopython
+
+
