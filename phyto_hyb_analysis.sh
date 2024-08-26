@@ -105,6 +105,33 @@ transabyss_kmers=32
 # Length Filtering program parameters.
 min_seq_length=500
 
+### EMBOSS getorf program parameters.
+
+# The minimum sequence length for the ORFs.
+min_size=500
+
+# The maximum sequence length for the ORFs.
+max_size=4000
+
+# Find the top three longest ORFs.
+orf_find=3
+
+# List of gene names to match in the hybrid assembly files and order you want the sequences to be concatenated.
+gene_list=("cpn60" "secY" "secA" "nusA" "tuf")
+
+# Join strings by delimeter character.
+join_by_string() {
+  local separator="$1"
+  shift
+  local first="$1"
+  shift
+  printf "%s" "$first" "${@/#/$separator}"
+}
+
+# Get the gene regular expression string. i.e. "cpn60\|secY\|secA\|nusA\|tuf"
+gene_regex=$(join_by_string "\|" "${gene_list[@]}")
+
+
 # Find all the fastq files in the dataset and write the full path to the file.
 #echo "find ${fastq_input_dir} -name \"*${fastq_file_ext}\" -type f | sed \"s/${read1_suffix}\|${read2_suffix}//g\" | rev | cut -d '/' -f1 | rev | sort -V | uniq > ${fastq_list_file}"
 #find ${fastq_input_dir} -name "*${fastq_file_ext}" -type f | sed "s/${read1_suffix}\|${read2_suffix}//g" | rev | cut -d '/' -f1 | rev | sort -V | uniq > ${fastq_list_file}
@@ -317,7 +344,7 @@ do
     done
 done
 
-##step6 - trim assemblies to retain only those >500 bp (code added by Kevin Muirhead)
+##step6 - trim assemblies to retain only those >500 bp 
 
 # Activate the biopython conda environment.
 conda activate biopython_env
@@ -375,5 +402,56 @@ do
 
     done
 done
+
+### EMBOSS getorf.
+
+gene_seqs_output_dir="${output_dir}/gene_sequences"
+mkdir -p $gene_seqs_output_dir
+
+for fastq_filename in $(cat $fastq_list_file);
+do
+
+    for gene_name in $(cat $subgroup_gene_list_file | cut -d '_' -f2 | uniq);
+    do
+
+	# The gene assembly output directory.
+        gene_assembly_output_dir="${assembly_output_dir}/${fastq_filename}/${gene_name}"
+	
+	# The gene assembly best hit fasta file with contig with best match to the database.
+	gene_assembly_fasta_file="${gene_assembly_output_dir}/${fastq_filename}__${gene_name}_assembly_best_hit.fasta"	
+
+	# The gene output directory.
+	gene_output_dir="${gene_seqs_output_dir}/fastq_filename"
+	mkdir -p $gene_output_dir
+
+	# The gene fasta output file that has the gene in correct orientation and ORF.
+	gene_fasta_outfile="${gene_output_dir}/${fastq_filename}__${gene_name}.fasta"
+
+	# Activate the emboss conda environment.
+	conda activate emboss_env	
+
+        # Use the getorf command to get ORFs from each assembly.
+	echo -e "getorf -sequence ${gene_assembly_fasta_file} -minsize ${min_size} -maxsize ${max_size} -find ${orf_find} -methionine N -outseq ${gene_fasta_outfile}"
+        getorf -sequence ${gene_assembly_fasta_file} -minsize ${min_size} -maxsize ${max_size} -find ${orf_find} -methionine N -outseq ${gene_fasta_outfile}
+
+    done
+done
+
+#gene_fasta_list_file="${gene_seqs_output_dir}/hybrid_genes_files.txt"
+
+# The list of hybrid gene file paths.
+#find $gene_seqs_output_dir -name "*\.fasta" -type f | grep "${gene_regex}" > $gene_fasta_list_file
+
+# Get a concatenated ordered list of gene names separated by commas.
+#gene_name_list=$(join_by_string "," "${gene_list[@]}")
+
+# Activate the biopython conda environment.
+#conda activate biopython_env
+
+#echo "Concatinating ${gene_name_list} files..."
+
+# Concatenate hybrid gene panel sequences in order of the gene_name_list.
+#echo -e "python concat_seqs_order.py --fasta_file_list_infile $gene_fasta_list_file --gene_name_list $gene_name_list --strain_name $strain_name --organism_name  $organism_name --output_dir $output_dir"
+#python concat_seqs_order.py --fasta_file_list_infile $gene_fasta_list_file --gene_name_list $gene_name_list --strain_name "\"${strain_name}\"" --organism_name "\"${organism_name}\"" --output_dir $output_dir
 
 

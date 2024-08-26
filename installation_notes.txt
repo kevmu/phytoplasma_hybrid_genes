@@ -83,40 +83,12 @@ cd software
 
 ### Download transabyss software source code.
 
-## Can do one of the following.
-
-# Clone from github.
-
 # Clone the transabyss software into the software directory.
 git clone https://github.com/bcgsc/transabyss.git
 
-# OR
-
-# Download transabyss from current release.
-wget https://www.bcgsc.ca/platform/bioinfo/software/trans-abyss/releases/2.0.1/transabyss-2.0.1.zip -O transabyss-2.0.1.zip
-
-# Unzip the transabyss compressed folder.
-unzip transabyss-2.0.1.zip
-
-################
-
-# SPADES
-
-## Install spades conda environment.
-
-# Create the spades conda environment.
-conda create --name spades_env
-
-# Activate the spades conda environment.
-conda activate spades_env
-
-# Install the spades conda environment.
-conda install -c conda-forge -c bioconda spades==4.0.0
-
-
 # Add following line to your ~/.bashrc file.
-#export PATH="/home/AGR.GC.CA/muirheadk/phytoplasma_hybrid_genes/software/transabyss:$PATH"
-export PATH="/home/AGR.GC.CA/muirheadk/phytoplasma_hybrid_genes/software/transabyss-2.0.1:$PATH"
+export PATH="/home/AGR.GC.CA/muirheadk/phytoplasma_hybrid_genes/software/transabyss:$PATH"
+#export PATH="/home/AGR.GC.CA/muirheadk/phytoplasma_hybrid_genes/software/transabyss-2.0.1:$PATH"
 
 ## Install blast conda environment.
 
@@ -140,4 +112,43 @@ conda activate biopython_env
 # Install the biopython conda environment.
 conda install -c bioconda biopython
 
+# Install the python module natsort using pip for sorting alphanumerically correctly.
+pip install natsort
+
+## Install EMBOSS conda environment to get getorf command.
+
+# Create the EMBOSS conda environment.
+
+conda create --name emboss_env
+
+# Activate the EMBOSS conda environment
+
+conda activate emboss_env
+
+# Install the EMBOSS conda environment.
+
+conda install -c bioconda emboss
+
+## Install biopython conda environment to get getorf command.
+
+# Create the biopython conda environment.
+
+conda create --name biopython_env
+
+# Activate the biopython conda environment
+
+conda activate biopython_env
+
+# Install the biopython conda environment.
+
+conda install -c bioconda biopython
+
+
+### How to use the extract_hybrid_genes.sh script.
+
+Use a text editor to edit the input and output directories in the extract_hybrid_genes.sh file.
+
+### Run using the following command.
+
+sh extract_hybrid_genes.sh
 
