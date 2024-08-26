@@ -40,7 +40,7 @@ read2_suffix="_L001_R2_001.fastq.gz"
 num_threads=40
 
 # The base output directory.
-output_dir="/home/AGR.GC.CA/muirheadk/phytoplasma_hybrid_genes/phy_hyb_output"
+output_dir="/home/AGR.GC.CA/muirheadk/phytoplasma_hybrid_genes/output"
 mkdir -p $output_dir
 
 # The preprocessing output directory.
@@ -232,7 +232,7 @@ do
         
         # Obtain all the reads aligned to each gene and write to the mapped bam file.
         echo "samtools view -bh --threads ${num_threads} ${sorted_bam_file} ${subgroup_gene_name} -o ${mapped_bam_file}";
-        samtools view -bh --threads ${num_threads} ${sorted_bam_file} ${subgroup_gene_name} -o  ${mapped_bam_file};
+        samtools view -bh --threads ${num_threads} ${sorted_bam_file} ${subgroup_gene_name} -o ${mapped_bam_file};
 
     done
 done
@@ -249,9 +249,10 @@ do
     do
         mapped_bam_file="${mapped_bam_output_dir}/${fastq_filename}.mapped.${subgroup_gene_name}.bam";
         mapped_subgroup_gene_fastq_file="${mapped_fastq_output_dir}/${fastq_filename}.mapped.${subgroup_gene_name}.fastq";
+	singleton_fastq_file="${mapped_fastq_output_dir}/${fastq_filename}_singletons.fastq" 
         
-        echo "samtools fastq ${mapped_bam_file} > ${mapped_subgroup_gene_fastq_file}";
-        samtools fastq ${mapped_bam_file} > ${mapped_subgroup_gene_fastq_file};
+	echo "samtools fastq ${mapped_bam_file} -s ${singleton_fastq_file} --threads ${num_threads} > ${mapped_subgroup_gene_fastq_file}";
+        samtools fastq ${mapped_bam_file} -s ${singleton_fastq_file} --threads ${num_threads} > ${mapped_subgroup_gene_fastq_file};
 
         # Get the gene name so that we can append each subgroup gene into the same file.
         gene_name=$(echo $subgroup_gene_name | cut -d '_' -f2);
@@ -266,12 +267,7 @@ do
     
 done
 
-###################################
-##How many reads mapped to each gene?
-
-#grep -c M01666 /home/AAFC-AAC/dumonceauxt/phyto_hyb/pre_processing/all-mapped_fastq/*.16S_AY-I.fastq
-
-
+## Calculate the number of fastq reads mapped to each gene for each sample.
 # The mapped fastq read count summary per gene.
 num_fastq_reads_file="${output_dir}/read_count_summary.tsv"
 
@@ -317,6 +313,7 @@ do
         
         echo "transabyss --se ${mapped_gene_fastq_file} -k ${transabyss_kmers} --threads ${num_threads} --outdir ${gene_assembly_output_dir}"
         transabyss --se ${mapped_gene_fastq_file} -k ${transabyss_kmers} --threads ${num_threads} --outdir ${gene_assembly_output_dir}
+
     done
 done
 
@@ -373,8 +370,8 @@ do
 	# Activate the biopython conda environment.
 	conda activate biopython_env 
 	
-	echo "python parse_blast_results_fasta.py --fasta_infile ${filtered_assembly_file} --blast_results_infile ${blast_results_file} --output_dir ${gene_assembly_output_dir}"
-	python parse_blast_results_fasta.py --fasta_infile ${filtered_assembly_file} --blast_results_infile ${blast_results_file} --output_dir ${gene_assembly_output_dir}
+	echo "python parse_best_hit_fasta.py --fasta_infile ${filtered_assembly_file} --blast_results_infile ${blast_results_file} --output_dir ${gene_assembly_output_dir}"
+	python parse_best_hit_fasta.py --fasta_infile ${filtered_assembly_file} --blast_results_infile ${blast_results_file} --output_dir ${gene_assembly_output_dir}
 
     done
 done

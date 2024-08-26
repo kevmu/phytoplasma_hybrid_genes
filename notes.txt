@@ -31,3 +31,9 @@ conda install -c bioconda biopython
 Use a text editor to edit the input and output directories in the extract_hybrid_genes.sh file. 
 
 
+
+# Use Strawberry for testing.
+/home/AGR.GC.CA/dumonceauxt/phyto-hyb/SbGP
+
+STRWB25_S7_L001_R1_001.fastq.gz
+

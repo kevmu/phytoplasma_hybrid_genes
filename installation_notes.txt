@@ -98,6 +98,21 @@ wget https://www.bcgsc.ca/platform/bioinfo/software/trans-abyss/releases/2.0.1/t
 # Unzip the transabyss compressed folder.
 unzip transabyss-2.0.1.zip
 
+################
+
+# SPADES
+
+## Install spades conda environment.
+
+# Create the spades conda environment.
+conda create --name spades_env
+
+# Activate the spades conda environment.
+conda activate spades_env
+
+# Install the spades conda environment.
+conda install -c conda-forge -c bioconda spades==4.0.0
+
 
 # Add following line to your ~/.bashrc file.
 #export PATH="/home/AGR.GC.CA/muirheadk/phytoplasma_hybrid_genes/software/transabyss:$PATH"
