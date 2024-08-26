@@ -421,7 +421,7 @@ do
 	gene_assembly_fasta_file="${gene_assembly_output_dir}/${fastq_filename}__${gene_name}_assembly_best_hit.fasta"	
 
 	# The gene output directory.
-	gene_output_dir="${gene_seqs_output_dir}/fastq_filename"
+	gene_output_dir="${gene_seqs_output_dir}/${fastq_filename}"
 	mkdir -p $gene_output_dir
 
 	# The gene fasta output file that has the gene in correct orientation and ORF.
@@ -437,21 +437,31 @@ do
     done
 done
 
-#gene_fasta_list_file="${gene_seqs_output_dir}/hybrid_genes_files.txt"
-
-# The list of hybrid gene file paths.
-#find $gene_seqs_output_dir -name "*\.fasta" -type f | grep "${gene_regex}" > $gene_fasta_list_file
+### Concatenate genes into one fasta file per sample.
 
 # Get a concatenated ordered list of gene names separated by commas.
-#gene_name_list=$(join_by_string "," "${gene_list[@]}")
+gene_name_list=$(join_by_string "," "${gene_list[@]}")
 
-# Activate the biopython conda environment.
-#conda activate biopython_env
+for fastq_filename in $(cat $fastq_list_file);
+do
+        # The gene output directory.
+        gene_output_dir="${gene_seqs_output_dir}/${fastq_filename}"
+        mkdir -p $gene_output_dir
 
-#echo "Concatinating ${gene_name_list} files..."
+	# Concatenate the genes into one sequence so that we can generate a phylogenetic tree.
+	gene_fasta_list_file="${gene_output_dir}/${fastq_filename}_hybrid_genes_files.txt"
 
-# Concatenate hybrid gene panel sequences in order of the gene_name_list.
-#echo -e "python concat_seqs_order.py --fasta_file_list_infile $gene_fasta_list_file --gene_name_list $gene_name_list --strain_name $strain_name --organism_name  $organism_name --output_dir $output_dir"
-#python concat_seqs_order.py --fasta_file_list_infile $gene_fasta_list_file --gene_name_list $gene_name_list --strain_name "\"${strain_name}\"" --organism_name "\"${organism_name}\"" --output_dir $output_dir
+	# The list of hybrid gene file paths.
+	find $gene_output_dir -name "*\.fasta" -type f | grep "${gene_regex}" > $gene_fasta_list_file
 
+	# Activate the biopython conda environment.
+	conda activate biopython_env
+
+	echo "Concatinating ${gene_name_list} files..."
+
+	# Concatenate hybrid gene panel sequences in order of the gene_name_list.
+	echo -e "python concat_seqs_order.py --fasta_file_list_infile ${gene_fasta_list_file} --gene_name_list ${gene_name_list} --sample_name ${fastq_filename} --output_dir ${gene_output_dir}"
+	python concat_seqs_order.py --fasta_file_list_infile ${gene_fasta_list_file} --gene_name_list ${gene_name_list} --sample_name ${fastq_filename} --output_dir ${gene_output_dir}
+
+done
 
