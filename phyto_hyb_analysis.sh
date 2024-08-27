@@ -325,7 +325,7 @@ done
 ##Assembly
 
 ## The assembly output directory.
-assembly_output_dir="${output_dir}/gene_assemblies"
+assembly_output_dir="${output_dir}/assemblies"
 mkdir -p $assemblies_output_dir
 
 # Activate the transabyss conda environment.

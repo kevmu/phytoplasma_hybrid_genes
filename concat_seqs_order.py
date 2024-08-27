@@ -101,6 +101,7 @@ for fasta_infile in fasta_file_list_input_file.readlines():
 concat_seq = ""
 concat_length_check = 0
 length_check_list = []
+genes_present_list =[]
 for gene_name in gene_name_list.split(","):
     #print(gene_name)
     if(gene_name in gene_sequences):
@@ -108,6 +109,7 @@ for gene_name in gene_name_list.split(","):
     
         seq_length = len(str(gene_sequences[gene_name]))
         #print(str(seq_length))
+        genes_present_list.append(gene_name)
     else:
 
         concat_seq += ""
@@ -131,7 +133,7 @@ print(" + ".join(length_check_list) + " = " + str(concat_seq_length))
 print(concat_seq_length)
 
 # The header description
-desc = " ".join(["\"" + gene_name_list + "\"","length=" + str(concat_seq_length) + "bp"])
+desc = " ".join(["\"" + ",".join(genes_present_list) + "\"","length=" + str(concat_seq_length) + "bp"])
 #print(desc)
 
 # Make a new sequence record object in fasta format with header and concatenated sequence.
