@@ -463,8 +463,8 @@ do
 	echo "Concatinating ${gene_name_list} files..."
 
 	# Concatenate hybrid gene panel sequences in order of the gene_name_list.
-	echo -e "python concat_seqs_order.py --fasta_file_list_infile ${gene_fasta_list_file} --gene_name_list ${gene_name_list} --sample_name ${fastq_filename} --output_dir ${gene_output_dir}"
-	python concat_seqs_order.py --fasta_file_list_infile ${gene_fasta_list_file} --gene_name_list ${gene_name_list} --sample_name ${fastq_filename} --output_dir ${gene_output_dir}
+	echo -e "python concat_seqs_order.py --fasta_file_list_infile ${gene_fasta_list_file} --gene_name_list ${gene_name_list} --sample_name ${fastq_filename} --output_dir ${gene_seqs_output_dir}"
+	python concat_seqs_order.py --fasta_file_list_infile ${gene_fasta_list_file} --gene_name_list ${gene_name_list} --sample_name ${fastq_filename} --output_dir ${gene_seqs_output_dir}
 
 done
 

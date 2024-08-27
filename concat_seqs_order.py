@@ -10,7 +10,7 @@ from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
 # Example Command
-# python concat_seqs_order.py --fasta_file_list_infile /Users/kevin.muirhead/Desktop/phytoHybGenes/gene_sequences/hybrid_genes_files.txt --gene_name_list "cpn60,secY,secA,nusA,tuf" --sample_name "BbSP" --organism_name "Candidatus Phytoplasma asteris" --output_dir /Users/kevin.muirhead/Desktop/phytoHybGenes
+# python concat_seqs_order.py --fasta_file_list_infile /Users/kevin.muirhead/Desktop/phytoHybGenes/gene_sequences/hybrid_genes_files.txt --gene_name_list "cpn60,secY,secA,nusA,tuf" --sample_name "BbSP" --output_dir /Users/kevin.muirhead/Desktop/phytoHybGenes
 
 parser = argparse.ArgumentParser()
 
@@ -68,7 +68,6 @@ if(output_dir == None):
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 
-
 fasta_file_list_input_file = open(fasta_file_list_infile, "r")
 counter = 0
 gene_sequences = {}
@@ -102,6 +101,11 @@ concat_seq = ""
 concat_length_check = 0
 length_check_list = []
 genes_present_list =[]
+
+csv_writer_file_handle = open(os.path.join(output_dir, sample_name + "_gene_stats.tsv"), "w+")
+csv_writer = csv.writer(csv_writer_file_handle, delimiter='\t', quotechar='"', quoting=csv.QUOTE_NONE)
+csv_writer.writerow(["sample_name","gene_name","sequence_length"])
+
 for gene_name in gene_name_list.split(","):
     #print(gene_name)
     if(gene_name in gene_sequences):
@@ -110,10 +114,12 @@ for gene_name in gene_name_list.split(","):
         seq_length = len(str(gene_sequences[gene_name]))
         #print(str(seq_length))
         genes_present_list.append(gene_name)
+    
     else:
-
         concat_seq += ""
         seq_length = len("")
+
+    csv_writer.writerow([sample_name,gene_name,seq_length])
 
     length_check_list.append(str(seq_length))
     
@@ -127,7 +133,7 @@ fasta_output_file = open(fasta_outfile, "w+")
 # Get the length of the concatenated sequence.
 concat_seq_length = len(str(concat_seq))
 
-print("This is is a length check for the calculation of the concatenated length.")
+print("This is a length check for the calculation of the concatenated length.")
 print(gene_name_list)
 print(" + ".join(length_check_list) + " = " + str(concat_seq_length))
 print(concat_seq_length)
