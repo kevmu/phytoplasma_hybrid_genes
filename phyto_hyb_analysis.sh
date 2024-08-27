@@ -116,6 +116,9 @@ max_size=4000
 # Find the top three longest ORFs.
 orf_find=3
 
+# The codon table to find ORFs. Table 11 for bacterial codons.
+codon_table=11
+
 # List of gene names to match in the hybrid assembly files and order you want the sequences to be concatenated.
 gene_list=("cpn60" "secY" "secA" "nusA" "tuf")
 
@@ -431,8 +434,8 @@ do
 	conda activate emboss_env	
 
         # Use the getorf command to get ORFs from each assembly.
-	echo -e "getorf -sequence ${gene_assembly_fasta_file} -minsize ${min_size} -maxsize ${max_size} -find ${orf_find} -methionine N -outseq ${gene_fasta_outfile}"
-        getorf -sequence ${gene_assembly_fasta_file} -minsize ${min_size} -maxsize ${max_size} -find ${orf_find} -methionine N -outseq ${gene_fasta_outfile}
+	echo -e "getorf -sequence ${gene_assembly_fasta_file} -minsize ${min_size} -maxsize ${max_size} -find ${orf_find} -methionine N -table ${codon_table} -outseq ${gene_fasta_outfile}"
+        getorf -sequence ${gene_assembly_fasta_file} -minsize ${min_size} -maxsize ${max_size} -find ${orf_find} -methionine N -table ${codon_table} -outseq ${gene_fasta_outfile}
 
     done
 done
