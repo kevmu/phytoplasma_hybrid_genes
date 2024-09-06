@@ -251,8 +251,14 @@ conda env export > iqtree_env.yaml
 
 #### Run the phytoplasma hybridization analysis script.
 
+# Example find command to get fastq_list_file.
+ find /archive/dumonceauxt/230801_M01666_0203_000000000-KTT65_IMPACTTlilacBBSPTWMQhybsEPL/Fastq -type f -name "*.fastq.gz" | rev | cut -d '/' -f1 | rev | sed 's/_L001_R[1-2]_001.fastq.gz//g' | sort -V | uniq | grep "BbSP_S17\|flaxBR1_S18\|Lilac2A1_S9\|Mq13_S19" > $HOME/phytoplasma_hybrid_genes/fastq_files_list.txt
+
 # Change the directory to the phytoplasma_hybrid_genes repository folder.
 cd $HOME/phytoplasma_hybrid_genes
+
+### How to use the phytoplasma_hybrid_analysis.sh script.
+Use a text editor to edit the input and output directories and files in the phytoplasma_hybrid_analysis.sh file.
 
 # Run the phytoplasma_hybrid_analysis.sh script.
 sh phytoplasma_hybrid_analysis.sh &> run_phytoplasma_hybrid_analysis.log.txt
