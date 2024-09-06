@@ -1,5 +1,16 @@
 ### Install the NCBI SRA toolkit
 
+
+## Install the sra_tools_env conda environment using the .yaml file.
+
+# Change the directory to the envs directory.
+cd envs
+
+# Install the sra tools conda environment using the .yaml file.
+conda env create --file sra_tools_env.yaml
+
+## Install the sra_tools_env conda environment from scratch.
+
 # Create the sra tools conda environment.
 conda create --name sra_tools_env
 
@@ -8,6 +19,9 @@ conda activate sra_tools_env
 
 # Install the sra tools conda environment.
 conda install -c bioconda sra-tools
+
+# Export the sra tools conda environment.
+conda env export > sra_tools_env.yaml
 
 # Download the fastq files from SRA.
 sh download_sra_dataset.sh &> run_download_sra_dataset.log.txt
