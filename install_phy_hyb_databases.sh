@@ -8,6 +8,9 @@
 #SBATCH --output=run_install_phy_hyb_databases.%A.out
 #SBATCH --error=run_install_phy_hyb_databases.%A.err
 
+# Get the source ~/.bashrc file so that we can use conda.
+source ~/.bashrc
+
 # Database path.
 database_dir="${HOME}/phytoplasma_hybrid_genes/databases"
 

@@ -1,0 +1,17 @@
+1847-2C1
+1847-4C3
+1847-6A1
+2813-1C1
+3194-2A1
+3516-1A1
+BnAY-BR1
+BnAY-TW1-high
+BnAY-TW1-low
+BnAY-TW1-medium
+BnAY-TW1-vlow
+NA18-199
+STRAW4
+Sb41
+Sb7
+uninfected_canola
+uninfected_grape

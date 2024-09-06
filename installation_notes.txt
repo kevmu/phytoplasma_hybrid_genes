@@ -66,6 +66,13 @@ conda env create --file mafft_env.yaml
 # Install the iqtree conda environment using the yaml file.
 conda env create --file iqtree_env.yaml
 
+### Install the bowtie2 reference database index and the blast gene databases.
+
+# Change the directory to the phytoplasma_hybrid_genes repository folder.
+cd $HOME/phytoplasma_hybrid_genes
+
+# Install the databases.
+sh install_phy_hyb_databases.sh &> run_install_phy_hyb_databases.log.txt
 
 ### Installing conda environments from scratch.
 
