@@ -90,8 +90,8 @@ conda activate biopython_env
 echo "Concatinating ${gene_name_list} files..."
 
 # Concatenate hybrid gene panel sequences in order of the gene_name_list.
-echo -e "python concat_seqs_order.py --fasta_file_list_infile $gene_fasta_list_file --gene_name_list $gene_name_list --strain_name $strain_name --organism_name  $organism_name --output_dir $output_dir"
-python concat_seqs_order.py --fasta_file_list_infile $gene_fasta_list_file --gene_name_list $gene_name_list --strain_name "\"${strain_name}\"" --organism_name "\"${organism_name}\"" --output_dir $output_dir
+echo -e "python concat_seqs_order_by_sample.py --fasta_file_list_infile $gene_fasta_list_file --gene_name_list $gene_name_list --strain_name $strain_name --organism_name  $organism_name --output_dir $output_dir"
+python concat_seqs_order_by_sample.py --fasta_file_list_infile $gene_fasta_list_file --gene_name_list $gene_name_list --strain_name "\"${strain_name}\"" --organism_name "\"${organism_name}\"" --output_dir $output_dir
 
 
 
