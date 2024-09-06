@@ -47,7 +47,6 @@ mkdir -p $output_dir
 preprocessing_output_dir="${output_dir}/preprocessing"
 mkdir -p $preprocessing_output_dir
 
-#fastq_list_file="${preprocessing_output_dir}/fastq_files_list.txt"
 
 ### Trimmomatic program parameters.
 
@@ -344,8 +343,8 @@ do
 
         filtered_assembly_file="${gene_assembly_output_dir}/${fastq_filename}__${gene_name}_assembly.fasta"
         
-        echo "python filter_sequences_by_length.py -i ${assembly_file} -l ${min_seq_length} -o ${filtered_assembly_file}"
-        python filter_sequences_by_length.py -i ${assembly_file} -l ${min_seq_length} -o ${filtered_assembly_file}
+        echo "python python_scripts/filter_sequences_by_length.py -i ${assembly_file} -l ${min_seq_length} -o ${filtered_assembly_file}"
+        python python_scripts/filter_sequences_by_length.py -i ${assembly_file} -l ${min_seq_length} -o ${filtered_assembly_file}
 
     done
 done
@@ -379,8 +378,8 @@ do
 	# Activate the biopython conda environment.
 	conda activate biopython_env 
 	
-	echo "python parse_best_hit_fasta.py --fasta_infile ${filtered_assembly_file} --blast_results_infile ${blast_results_file} --output_dir ${gene_assembly_output_dir}"
-	python parse_best_hit_fasta.py --fasta_infile ${filtered_assembly_file} --blast_results_infile ${blast_results_file} --output_dir ${gene_assembly_output_dir}
+	echo "python python_scripts/parse_best_hit_fasta.py --fasta_infile ${filtered_assembly_file} --blast_results_infile ${blast_results_file} --output_dir ${gene_assembly_output_dir}"
+	python python_scripts/parse_best_hit_fasta.py --fasta_infile ${filtered_assembly_file} --blast_results_infile ${blast_results_file} --output_dir ${gene_assembly_output_dir}
 
     done
 done
@@ -442,8 +441,8 @@ do
 	echo "Concatinating ${gene_name_list} files..."
 
 	# Concatenate hybrid gene panel sequences in order of the gene_name_list.
-	echo -e "python concat_seqs_order.py --fasta_file_list_infile ${gene_fasta_list_file} --gene_name_list ${gene_name_list} --sample_name ${fastq_filename} --output_dir ${gene_seqs_output_dir}"
-	python concat_seqs_order.py --fasta_file_list_infile ${gene_fasta_list_file} --gene_name_list ${gene_name_list} --sample_name ${fastq_filename} --output_dir ${gene_seqs_output_dir}
+	echo -e "python python_scripts/concat_seqs_order_all_samples.py --fasta_file_list_infile ${gene_fasta_list_file} --gene_name_list ${gene_name_list} --sample_name ${fastq_filename} --output_dir ${gene_seqs_output_dir}"
+	python python_scripts/concat_seqs_order_all_samples.py --fasta_file_list_infile ${gene_fasta_list_file} --gene_name_list ${gene_name_list} --sample_name ${fastq_filename} --output_dir ${gene_seqs_output_dir}
 
 done
 
