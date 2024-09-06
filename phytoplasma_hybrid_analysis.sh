@@ -19,6 +19,9 @@
 # Get the source ~/.bashrc file so that we can use conda.
 source ~/.bashrc
 
+# Example find command to get fastq_list_file.
+# find /archive/dumonceauxt/230801_M01666_0203_000000000-KTT65_IMPACTTlilacBBSPTWMQhybsEPL/Fastq -type f -name "*.fastq.gz" | rev | cut -d '/' -f1 | rev | sed 's/_L001_R[1-2]_001.fastq.gz//g' | sort -V | uniq | grep "BbSP_S17\|flaxBR1_S18\|Lilac2A1_S9\|Mq13_S19" > $HOME/phytoplasma_hybrid_genes/fastq_files_list.txt
+
 # The list of fastq filenames.
 fastq_list_file="/home/AGR.GC.CA/muirheadk/phytoplasma_hybrid_genes/fastq_files_list.txt"
 
