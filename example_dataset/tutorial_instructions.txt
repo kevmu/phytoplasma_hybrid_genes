@@ -9,4 +9,11 @@ conda activate sra_tools_env
 # Install the sra tools conda environment.
 conda install -c bioconda sra-tools
 
+# Download the fastq files from SRA.
+sh download_sra_dataset.sh &> run_download_sra_dataset.log.txt
+
+# At the end of the log file is the paths required to run the phytoplasma_hybrid_analysis.sh script.
+less run_download_sra_dataset.log.txt
+
+# Add those lines to the script.
 
