@@ -85,8 +85,7 @@ read_length=300
 ### Databases.
 
 # Database path.
-database_dir="/home/AGR.GC.CA/muirheadk/phytoplasma_hybrid_genes/databases"
-### Bowtie2 database.
+database_dir="${HOME}/phytoplasma_hybrid_genes/databases"
 
 # The reference protein sequence fasta file for building the bowtie2 reference database index.
 ref_fasta_infile="${database_dir}/ref_db/ref_protein_seqs.fasta"
@@ -94,8 +93,6 @@ ref_fasta_infile="${database_dir}/ref_db/ref_protein_seqs.fasta"
 # The header line content from the reference protein sequence fasta file in a list file for retaining fastq reads aligned to the reference subgroup protein sequences.
 subgroup_gene_list_file="${database_dir}/ref_db/ref_protein_seqs_header_list.txt"
 
-# Get the contents of each fasta header in the reference fasta database and write to a file so we can extract mapped reads to a fastq file for assembly.
-grep ">" ${ref_fasta_infile} | sed 's/>//g' > ${subgroup_gene_list_file}
 
 ### Transabyss program parameters.
 
@@ -133,11 +130,6 @@ join_by_string() {
 
 # Get the gene regular expression string. i.e. "cpn60\|secY\|secA\|nusA\|tuf"
 gene_regex=$(join_by_string "\|" "${gene_list[@]}")
-
-
-# Find all the fastq files in the dataset and write the full path to the file.
-#echo "find ${fastq_input_dir} -name \"*${fastq_file_ext}\" -type f | sed \"s/${read1_suffix}\|${read2_suffix}//g\" | rev | cut -d '/' -f1 | rev | sort -V | uniq > ${fastq_list_file}"
-#find ${fastq_input_dir} -name "*${fastq_file_ext}" -type f | sed "s/${read1_suffix}\|${read2_suffix}//g" | rev | cut -d '/' -f1 | rev | sort -V | uniq > ${fastq_list_file}
 
 
 #step 1A: trimmomatic
@@ -189,25 +181,10 @@ do
 done
 
 
-##step 3: mapping vs protein-coding genes
-##Install bowtie2
-#
-#conda install -c conda-forge tbb
-#
-#conda install -c bioconda bowtie2
-#
-##make bowtie reference files
-##Ensure you are using a compute node (qlogin)
-#
-##build one ref file for all protein-coding seqs (cpn60; nusA, secY, secA, rp, tuf - call this file ref_protein_seqs.fasta)
-##then, build separate ref files containing type-specific 16S genes with junk; eg typeI_16S_junk.fasta
-#
+## Step 3: mapping vs protein-coding genes
 
+# Activate the bowtie2 conda environment.
 conda activate bowtie2_env
-
-# Build the bowtie2 reference database.
-echo "bowtie2-build -f ${ref_fasta_infile} ${ref_fasta_infile}"
-bowtie2-build -f ${ref_fasta_infile} ${ref_fasta_infile}
 
 # The mapped reference output directory.
 mapped_reference_output_dir="${output_dir}/mapped_reference"
@@ -225,6 +202,7 @@ do
 
 done
 
+# Activate the samtools conda environment.
 conda activate samtools_env
 
 for fastq_filename in $(cat $fastq_list_file);
@@ -298,11 +276,13 @@ do
 done
 
 ## Calculate the number of fastq reads mapped to each gene for each sample.
+
 # The mapped fastq read count summary per gene.
 num_fastq_reads_file="${output_dir}/read_count_summary.tsv"
 
 echo "echo -e \"sample_name\tgene_name\tnum_fastq_reads\" > ${num_fastq_reads_file}"
 echo -e "sample_name\tgene_name\tnum_fastq_reads" > ${num_fastq_reads_file}
+
 
 # Calculate the number of fastq reads and report to the summary file.
 for fastq_filename in $(cat $fastq_list_file);
@@ -322,7 +302,7 @@ do
     done
 done
 
-##Assembly
+## Assembly
 
 ## The assembly output directory.
 assembly_output_dir="${output_dir}/assemblies"
@@ -347,7 +327,7 @@ do
     done
 done
 
-##step6 - trim assemblies to retain only those >500 bp 
+## Step6 - trim assemblies to retain only those >500 bp 
 
 # Activate the biopython conda environment.
 conda activate biopython_env
@@ -366,6 +346,7 @@ do
         
         echo "python filter_sequences_by_length.py -i ${assembly_file} -l ${min_seq_length} -o ${filtered_assembly_file}"
         python filter_sequences_by_length.py -i ${assembly_file} -l ${min_seq_length} -o ${filtered_assembly_file}
+
     done
 done
 
@@ -388,14 +369,12 @@ do
 	# Activate the blast conda environment.
 	conda activate blast_env
 
-	echo "makeblastdb -in ${blast_db_fasta_file} -dbtype nucl -out ${blast_db_fasta_file}"
-	makeblastdb -in ${blast_db_fasta_file} -dbtype nucl -out ${blast_db_fasta_file}
-
 	echo "echo \"qseqid qacc qlen sseqid sacc slen stitle qstart qend sstart send length evalue bitscore pident qcovs qcovhsp nident positive mismatch gaps qframe sframe\" | sed 's/ /\t/g' > ${blast_results_file}"
 	echo "qseqid qacc qlen sseqid sacc slen stitle qstart qend sstart send length evalue bitscore pident qcovs qcovhsp nident positive mismatch gaps qframe sframe" | sed 's/ /\t/g' > ${blast_results_file}
 
 	echo "blastn -query ${filtered_assembly_file} -db ${blast_db_fasta_file} -out "-" -evalue 1e-05 -max_target_seqs 10 -num_threads ${num_threads} -outfmt '6 qseqid qacc qlen sseqid sacc slen stitle qstart qend sstart send length evalue bitscore pident qcovs qcovhsp nident positive mismatch gaps qframe sframe' >> ${blast_results_file}"
 	blastn -query ${filtered_assembly_file} -db ${blast_db_fasta_file} -out "-" -evalue 1e-05 -max_target_seqs 10 -num_threads ${num_threads} -outfmt '6 qseqid qacc qlen sseqid sacc slen stitle qstart qend sstart send length evalue bitscore pident qcovs qcovhsp nident positive mismatch gaps qframe sframe' >> ${blast_results_file}
+
 
 	# Activate the biopython conda environment.
 	conda activate biopython_env 

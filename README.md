@@ -37,4 +37,5 @@ Use a text editor to edit the input and output directories in the extract_hybrid
 
 sh extract_hybrid_genes.sh
 
+cat /home/AGR.GC.CA/muirheadk/phytoplasma_hybrid_genes/output/gene_sequences/*_concat_hybrid_genes.fasta > /home/AGR.GC.CA/muirheadk/phytoplasma_hybrid_genes/output/all_concat_hybrid_genes.fasta
 

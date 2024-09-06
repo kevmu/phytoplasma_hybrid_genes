@@ -1,0 +1,12 @@
+### Install the NCBI SRA toolkit
+
+# Create the sra tools conda environment.
+conda create --name sra_tools_env
+
+# Activate the sra tools conda environment.
+conda activate sra_tools_env
+
+# Install the sra tools conda environment.
+conda install -c bioconda sra-tools
+
+

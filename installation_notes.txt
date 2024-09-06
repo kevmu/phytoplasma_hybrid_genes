@@ -1,4 +1,73 @@
-# Get the source ~/.bashrc file so that we can use conda.
+### Clone the phytoplasma hybridization analysis source code from github.
+
+# Make sure your current working directory is your home directory.
+cd $HOME
+
+# Clone the phytoplasma_hybrid_genes repository.
+git clone https://github.com/kevmu/phytoplasma_hybrid_genes.git
+
+# Change directory to the phytoplasma_hybrid_genes directory.
+cd phytoplasma_hybrid_genes
+
+### Install the transabyss software. 
+
+# Create the software directory.
+mkdir -p software
+
+# Change directory to the software directory.
+cd software
+
+### Download transabyss software source code.
+
+# Clone the transabyss software into the software directory.
+git clone https://github.com/bcgsc/transabyss.git
+
+# Add the following line to your ~/.bashrc file.
+export PATH="$HOME/phytoplasma_hybrid_genes/software/transabyss:$PATH"
+
+
+#### Install conda environments.
+
+# Get the source of the ~/.bashrc file so that we can use the conda command.
+source ~/.bashrc
+
+### Installing conda environments using the yaml files.
+
+# Change directory to the envs directory.
+cd $HOME/phytoplasma_hybrid_genes/envs
+
+# Install the trimmomatic conda environment using the yaml file.
+conda env create --file trimmomatic_env.yaml
+
+# Install the flash2 conda environment using the yaml file.
+conda env create --file flash2_env.yaml
+
+# Install the bowtie2 conda environment using the yaml file.
+conda env create --file bowtie2_env.yaml
+
+# Install the samtools conda environment using the yaml file.
+conda env create --file samtools_env.yaml
+
+# Install the transabyss conda environment using the yaml file.
+conda env create --file transabyss_env.yaml
+
+# Install the blast conda environment using the yaml file.
+conda env create --file blast_env.yaml
+
+# Install the biopython conda environment using the yaml file.
+conda env create --file biopython_env.yaml
+
+# Install the emboss conda environment using the yaml file.
+conda env create --file emboss_env.yaml
+
+# Install the mafft conda environment using the yaml file.
+conda env create --file mafft_env.yaml
+
+# Install the iqtree conda environment using the yaml file.
+conda env create --file iqtree_env.yaml
+
+
+### Installing conda environments from scratch.
 
 ## Instructions for installing the trimmomatic conda environment.
 
@@ -11,6 +80,10 @@ conda activate trimmomatic_env
 # Install the trimmomatic conda environment.
 conda install -c bioconda trimmomatic
 
+# Export the trimmomatic conda environment to a yaml file.
+conda env export > trimmomatic_env.yaml
+
+
 ## Instructions for installing the flash2 conda environment.
 
 # Create the flash2 conda environment.
@@ -21,6 +94,10 @@ conda activate flash2_env
 
 # Install the flash2 conda environment.
 conda install -c bioconda flash2
+
+# Export the flash2 conda environment to a yaml file.
+conda env export > flash2_env.yaml
+
 
 ## Instructions for installing the bowtie2 conda environment.
 
@@ -33,6 +110,10 @@ conda activate bowtie2_env
 # Install the bowtie2 conda environment.
 conda install -c bioconda bowtie2
 
+# Export the bowtie2 conda environment to a yaml file.
+conda env export > bowtie2_env.yaml
+
+
 ## Instructions for installing the samtools conda environment.
 
 # Create the samtools conda environment.
@@ -43,6 +124,10 @@ conda activate samtools_env
 
 # Install the samtools conda environment.
 conda install -c bioconda samtools==1.6=hb116620_7
+
+# Export the samtools conda environment to a yaml file.
+conda env export > samtools_env.yaml
+
 
 ## Installing the transabyss conda environment.
 
@@ -75,20 +160,9 @@ conda install -c conda-forge pigz zsh
 # transabyss dependencies.
 conda install -c bioconda blat
 
-# Create the software directory.
-mkdir -p software
+# Export the transabyss conda environment to a yaml file.
+conda env export > transabyss_env.yaml
 
-# Change directory to the software directory.
-cd software
-
-### Download transabyss software source code.
-
-# Clone the transabyss software into the software directory.
-git clone https://github.com/bcgsc/transabyss.git
-
-# Add following line to your ~/.bashrc file.
-export PATH="/home/AGR.GC.CA/muirheadk/phytoplasma_hybrid_genes/software/transabyss:$PATH"
-#export PATH="/home/AGR.GC.CA/muirheadk/phytoplasma_hybrid_genes/software/transabyss-2.0.1:$PATH"
 
 ## Install blast conda environment.
 
@@ -100,6 +174,9 @@ conda activate blast_env
 
 # Install the blast conda environment.
 conda install -c bioconda blast
+
+# Export the blast conda environment to a yaml file.
+conda env export > blast_env.yaml
 
 ## Install biopython conda environment.
 
@@ -115,6 +192,9 @@ conda install -c bioconda biopython
 # Install the python module natsort using pip for sorting alphanumerically correctly.
 pip install natsort
 
+# Export the biopython conda environment to a yaml file.
+conda env export > biopython_env.yaml
+
 ## Install EMBOSS conda environment to get getorf command.
 
 # Create the EMBOSS conda environment.
@@ -129,30 +209,39 @@ conda activate emboss_env
 
 conda install -c bioconda emboss
 
-## Install biopython conda environment to get getorf command.
+# Export the emboss conda environment to a yaml file.
+conda env export > emboss_env.yaml
 
-# Create the biopython conda environment.
-
-conda create --name biopython_env
-
-# Activate the biopython conda environment
-
-conda activate biopython_env
-
-# Install the biopython conda environment.
-
-conda install -c bioconda biopython
 
 ### Phylogenetic tree 
+
+# Create the mafft conda environment.
 conda create --name mafft_env
+
+# Activate the mafft conda environment.
 conda activate mafft_env
+
+# Install the mafft conda environment.
 conda install -c bioconda mafft
 
+# Export the mafft conda environment to a yaml file.
+conda env export > mafft_env.yaml
 
+
+# Create the iqtree conda environment.
 conda create --name iqtree_env
+
+# Activate the iqtree conda environment.
 conda activate iqtree_env
+
+# Install the iqtree conda environment.
 conda install -c bioconda iqtree
 
+# Export the iqtree conda environment to a yaml file.
+conda env export > iqtree_env.yaml
+
+
+# If you finished the assembly of each gene sequence and need to concatenate after fixing something. You can start at this step.
 
 ### How to use the extract_hybrid_genes.sh script.
 
