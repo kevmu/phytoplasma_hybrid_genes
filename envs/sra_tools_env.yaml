@@ -1,0 +1,7 @@
+name: sra_tools_env
+channels:
+  - bioconda
+  - defaults
+dependencies:
+  - sra-tools=2.8.0=0
+prefix: /home/AGR.GC.CA/muirheadk/miniconda3/envs/sra_tools_env
