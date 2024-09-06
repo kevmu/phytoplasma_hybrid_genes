@@ -248,6 +248,17 @@ conda install -c bioconda iqtree
 conda env export > iqtree_env.yaml
 
 
+
+#### Run the phytoplasma hybridization analysis script.
+
+# Change the directory to the phytoplasma_hybrid_genes repository folder.
+cd $HOME/phytoplasma_hybrid_genes
+
+# Run the phytoplasma_hybrid_analysis.sh script.
+sh phytoplasma_hybrid_analysis.sh &> run_phytoplasma_hybrid_analysis.log.txt
+
+
+
 # If you finished the assembly of each gene sequence and need to concatenate after fixing something. You can start at this step.
 
 ### How to use the extract_hybrid_genes.sh script.
@@ -256,5 +267,5 @@ Use a text editor to edit the input and output directories in the extract_hybrid
 
 ### Run using the following command.
 
-sh extract_hybrid_genes.sh
+sh extract_hybrid_genes.sh &> run_extract_hybrid_genes.log.txt
 
