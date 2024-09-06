@@ -143,6 +143,16 @@ conda activate biopython_env
 
 conda install -c bioconda biopython
 
+### Phylogenetic tree 
+conda create --name mafft_env
+conda activate mafft_env
+conda install -c bioconda mafft
+
+
+conda create --name iqtree_env
+conda activate iqtree_env
+conda install -c bioconda iqtree
+
 
 ### How to use the extract_hybrid_genes.sh script.
 
