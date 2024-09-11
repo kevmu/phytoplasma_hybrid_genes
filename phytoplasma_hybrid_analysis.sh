@@ -317,7 +317,7 @@ conda activate transabyss_env
 for fastq_filename in $(cat $fastq_list_file);
 do
 
-    for gene_name in $(cat $subgroup_gene_list_file | cut -d '_' -f2 | uniq);
+    for gene_name in $(cat $subgroup_gene_list_file | cut -d '_' -f2 | uniq | grep -v "16S");
     do
         # The gene fastq file.
         mapped_gene_fastq_file="${mapped_fastq_output_dir}/${fastq_filename}.mapped.${gene_name}.fastq";
@@ -337,7 +337,7 @@ conda activate biopython_env
 for fastq_filename in $(cat $fastq_list_file);
 do
 
-    for gene_name in $(cat $subgroup_gene_list_file | cut -d '_' -f2 | uniq);
+    for gene_name in $(cat $subgroup_gene_list_file | cut -d '_' -f2 | uniq | grep -v "16S");
     do
         
 	gene_assembly_output_dir="${assembly_output_dir}/${fastq_filename}/${gene_name}"
@@ -357,7 +357,7 @@ done
 for fastq_filename in $(cat $fastq_list_file);
 do
 
-    for gene_name in $(cat $subgroup_gene_list_file | cut -d '_' -f2 | uniq);
+    for gene_name in $(cat $subgroup_gene_list_file | cut -d '_' -f2 | uniq | grep -v "16S");
     do
 
         gene_assembly_output_dir="${assembly_output_dir}/${fastq_filename}/${gene_name}"
@@ -395,7 +395,7 @@ mkdir -p $gene_seqs_output_dir
 for fastq_filename in $(cat $fastq_list_file);
 do
 
-    for gene_name in $(cat $subgroup_gene_list_file | cut -d '_' -f2 | uniq);
+    for gene_name in $(cat $subgroup_gene_list_file | cut -d '_' -f2 | uniq | grep -v "16S");
     do
 
 	# The gene assembly output directory.
