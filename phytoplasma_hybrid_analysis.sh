@@ -95,6 +95,41 @@ ref_fasta_infile="${database_dir}/ref_db/ref_protein_seqs.fasta"
 # The header line content from the reference protein sequence fasta file in a list file for retaining fastq reads aligned to the reference subgroup protein sequences.
 subgroup_gene_list_file="${database_dir}/ref_db/ref_protein_seqs_header_list.txt"
 
+### EMIRGE parameters.
+
+# ITERATIONS
+# Number of iterations to perform.  It may be necessary
+# to use more iterations for more complex samples
+# (default=40)
+num_iter=40
+
+# SNP_FRACTION_THRESH
+# If fraction of variants in a candidate sequence
+# exceeds this threhold, then split the candidate into
+# two sequences for next iteration.  See also
+# --variant_fraction_thresh. (default: 0.04)
+#snp_fraction_thresh=0.30
+snp_fraction_thresh=0.04
+
+# VARIANT_FRACTION_THRESH
+# minimum probability of second most probable base at a
+# site required in order to call site a variant.  See
+# also --snp_fraction_thresh.  (default: 0.10)
+#variant_fraction_thresh=0.10
+variant_fraction_thresh=0.10
+
+# JOIN_THRESHOLD
+# If two candidate sequences share >= this fractional
+# identity over their bases with mapped reads, then
+# merge the two sequences into one for the next
+# iteration.  (default: 0.97; valid range: [0.95, 1.0] )
+join_threshold=0.97
+
+# MIN_DEPTH
+# minimum average read depth below which a candidate
+# sequence is discarded for next iteration (default: 3)
+min_depth=3
+
 
 ### Transabyss program parameters.
 
@@ -304,7 +339,7 @@ do
     done
 done
 
-## Assembly
+## Gene Assembly
 
 ## The assembly output directory.
 assembly_output_dir="${output_dir}/assemblies"
@@ -317,7 +352,7 @@ conda activate transabyss_env
 for fastq_filename in $(cat $fastq_list_file);
 do
 
-    for gene_name in $(cat $subgroup_gene_list_file | cut -d '_' -f2 | uniq | grep -v "16S");
+    for gene_name in $(cat $subgroup_gene_list_file | cut -d '_' -f2 | uniq);
     do
         # The gene fastq file.
         mapped_gene_fastq_file="${mapped_fastq_output_dir}/${fastq_filename}.mapped.${gene_name}.fastq";
@@ -337,7 +372,7 @@ conda activate biopython_env
 for fastq_filename in $(cat $fastq_list_file);
 do
 
-    for gene_name in $(cat $subgroup_gene_list_file | cut -d '_' -f2 | uniq | grep -v "16S");
+    for gene_name in $(cat $subgroup_gene_list_file | cut -d '_' -f2 | uniq);
     do
         
 	gene_assembly_output_dir="${assembly_output_dir}/${fastq_filename}/${gene_name}"
@@ -357,7 +392,7 @@ done
 for fastq_filename in $(cat $fastq_list_file);
 do
 
-    for gene_name in $(cat $subgroup_gene_list_file | cut -d '_' -f2 | uniq | grep -v "16S");
+    for gene_name in $(cat $subgroup_gene_list_file | cut -d '_' -f2 | uniq);
     do
 
         gene_assembly_output_dir="${assembly_output_dir}/${fastq_filename}/${gene_name}"
